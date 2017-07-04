@@ -27,7 +27,7 @@ class HttpLifter(excludeHttpHeadersComparison: Boolean) {
 
   private[this] val log = Logger(classOf[HttpLifter])
   private[this] def headersMap(response: HttpResponse): Map[String, Any] = {
-    if(!excludeHttpHeadersComparison) {
+    if (!excludeHttpHeadersComparison) {
       val rawHeaders = response.headers.entries().map { header =>
         (header.getKey, header.getValue)
       }.toSeq
@@ -50,7 +50,7 @@ class HttpLifter(excludeHttpHeadersComparison: Boolean) {
     Future.const(resp) flatMap { r: HttpResponse =>
       val mediaTypeOpt: Option[MediaType] =
         Option(r.headers.get(HttpHeaders.CONTENT_TYPE)) map { MediaType.parse }
-      
+
       val contentLengthOpt = Option(r.headers.get(HttpHeaders.CONTENT_LENGTH))
 
       /** header supplied by macaw, indicating the controller reached **/
@@ -83,24 +83,25 @@ class HttpLifter(excludeHttpHeadersComparison: Boolean) {
           }
         }
 
-        /** When Content-Type is set as text/html, lift as Html **/
+        /** When Content-Type is set as text/html or text/xml, lift as Html **/
         case (Some(mediaType), _)
-          if mediaType.is(MediaType.HTML_UTF_8) || mediaType.toString == "text/html" => {
-            val htmlContentTry = Try {
-              HtmlLifter.lift(HtmlLifter.decode(r.getContent.copy.toString(Charsets.Utf8)))
-            }
-
-            Future.const(htmlContentTry map { htmlContent =>
-              val responseMap = Map(
-                r.getStatus.getCode.toString -> (Map(
-                  "content" -> htmlContent,
-                  "chunked" -> r.isChunked
-                ) ++ headersMap(r))
-              )
-
-              Message(controllerEndpoint, FieldMap(responseMap))
-            })
+          if mediaType.is(MediaType.HTML_UTF_8) || mediaType.toString == "text/html"
+            || mediaType.toString.contains("text/xml") => {
+          val htmlContentTry = Try {
+            HtmlLifter.lift(HtmlLifter.decode(r.getContent.copy.toString(Charsets.Utf8)))
           }
+
+          Future.const(htmlContentTry map { htmlContent =>
+            val responseMap = Map(
+              r.getStatus.getCode.toString -> (Map(
+                "content" -> htmlContent,
+                "chunked" -> r.isChunked
+              ) ++ headersMap(r))
+            )
+
+            Message(controllerEndpoint, FieldMap(responseMap))
+          })
+        }
 
         /** When content type is not set, only compare headers **/
         case (None, _) => {
