@@ -61,19 +61,35 @@ start using Diffy to compare three instances of your service:
 4. Download the latest Diffy binary or build your own from the code.
 5. Run the Diffy jar with following command line arguments:
 
+    * Running diffy locally
     ```
-    java -jar diffy-server.jar \
-    -candidate=localhost:9992 \
-    -master.primary=localhost:9990 \
-    -master.secondary=localhost:9991 \
-    -service.protocol=http \
-    -serviceName=My-Service \
-    -proxy.port=:31900 \
-    -admin.port=:31159 \
-    -http.port=:31149 \
-    -rootUrl='localhost:31149'
-    ```
-
+        java -jar diffy-server.jar \
+        -candidate=localhost:9992 \
+        -master.primary=localhost:9990 \
+        -master.secondary=localhost:9991 \
+        -service.protocol=http \
+        -serviceName=My-Service \
+        -proxy.port=:31900 \
+        -admin.port=:31159 \
+        -http.port=:31149 \
+        -rootUrl='localhost:31149'
+     ```
+    
+    * Running the diffy inside docker
+    
+     ```
+         docker run soapdiffy:0.1
+         -candidate=localhost:9992 \
+         -master.primary=localhost:9990 \
+         -master.secondary=localhost:9991 \
+         -service.protocol=http \
+         -serviceName=My-Service \
+         -proxy.port=:31900 \
+         -admin.port=:31159 \
+         -http.port=:31149 \
+         -rootUrl='localhost:31149'
+     ```
+     
 6. Send a few test requests to your Diffy instance on its proxy port:
 
     ```
