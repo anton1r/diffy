@@ -8,7 +8,7 @@
 
 ## Status
 
-This project is used in production at Twitter and is being actively developed and maintained. Feel 
+This project is used in production at Twitter and is being actively developed and maintained. Feel
 free to contact us on gitter or [@diffyproject](https://twitter.com/diffyproject).
 
 ## What is Diffy?
@@ -44,15 +44,15 @@ determines that there is nothing wrong and that the error can be ignored.
 
 ## How to get started?
 
-First, you need to build Diffy by invoking `./sbt assembly` from your diffy directory. This will create 
+First, you need to build Diffy by invoking `./sbt assembly` from your diffy directory. This will create
 a diffy jar at `diffy/target/scala-2.11/diffy-server.jar`.
 
-Diffy comes bundled with an example.sh script that you can run to start comparing examples instances 
-we have already deployed online. Once your local Diffy instance is deployed, you send it a few requests 
-via `curl --header "Canonical-Resource: Html" localhost:8880` and `curl --header "Canonical-Resource: Json" localhost:8880/json`. You can then go to your browser at 
+Diffy comes bundled with an example.sh script that you can run to start comparing examples instances
+we have already deployed online. Once your local Diffy instance is deployed, you send it a few requests
+via `curl --header "Canonical-Resource: Html" localhost:8880` and `curl --header "Canonical-Resource: Json" localhost:8880/json`. You can then go to your browser at
 [http://localhost:8888](http://localhost:8888) to see what the differences across our example instances look like.
 
-That was cool but now you want to compare old and new versions of your own service. Here’s how you can 
+That was cool but now you want to compare old and new versions of your own service. Here’s how you can
 start using Diffy to compare three instances of your service:
 
 1. Deploy your old code to `localhost:9990`. This is your primary.
@@ -74,11 +74,14 @@ start using Diffy to compare three instances of your service:
         -http.port=:31149 \
         -rootUrl='localhost:31149'
      ```
-    
+
     * Running the diffy inside docker
-    
+
      ```
-         docker run soapdiffy:0.1
+         docker run -ti \
+           -p 31900:31900 \
+           -p 31149:31149 \
+         soapdiffy:0.1 \
          -candidate=localhost:9992 \
          -master.primary=localhost:9990 \
          -master.secondary=localhost:9991 \
@@ -89,7 +92,7 @@ start using Diffy to compare three instances of your service:
          -http.port=:31149 \
          -rootUrl='localhost:31149'
      ```
-     
+
 6. Send a few test requests to your Diffy instance on its proxy port:
 
     ```
@@ -101,7 +104,7 @@ start using Diffy to compare three instances of your service:
 ### Running example on docker-compose
 
 Inside the example directory you will find instructions to run a complete example with apis and diffy configured and ready to run using docker-compose.
- 
+
 ## FAQ's
    For safety reasons `POST`, `PUT`, ` DELETE ` are ignored by default . Add ` -allowHttpSideEffects=true ` to your command line arguments to enable these verbs.
 
@@ -109,7 +112,7 @@ Inside the example directory you will find instructions to run a complete exampl
 If you are trying to run Diffy over a HTTPS API, the config required is:
 
     -service.protocol=https
-   
+
 And in case of the HTTPS port be different than 443:
 
     -https.port=123
